@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drinks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    header{
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    z-index: 100;
+}
+
+nav{
+    display: flex;
+    gap: 12px;
+}
+
+/* BUTTON STYLE */
+nav a{
+    text-decoration: none;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+/* HOVER EFFECT */
+nav a:hover{
+    background: white;
+    color: black;
+}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8f5f1;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .hero {
+      height: 70vh;
+      background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+      url('https://thumbs.dreamstime.com/b/lime-whole-chopped-wedged-leaves-photograph-ice-iceberg-shape-piece-lemon-top-floating-white-background-freshness-329491548.jpg?w=768') center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .hero-content h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      color: white;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .hero-content p {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .menu-container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 80px 25px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+    }
+
+    .menu-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      transition: 0.35s ease;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .menu-card img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .menu-content {
+      padding: 28px;
+    }
+
+    .menu-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 20px;
+    }
+
+    .menu-top h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #b07d62;
+      white-space: nowrap;
+    }
+
+    .menu-content p {
+      line-height: 1.7;
+      color: #555;
+      margin-bottom: 20px;
+      font-size: 0.96rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag {
+      background: #f1e4dc;
+      color: #8b5e46;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 40px 20px 60px;
+      color: #777;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero-content h1 {
+        font-size: 3.3rem;
+      }
+
+      .menu-top h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <header >
+       
+        <nav>
+            <a href="main (2).html">Breaskfast</a>
+            <a href="brunch.html">Brunch</a>
+            <a href="Dinner.html">Dinner</a>
+            <a href="Lounge.html">Lounge</a>
+        </nav>
+    </header>
+    <div class="hero-content">
+      <h1>Dinner Menu</h1>
+      <p>Freshly Prepared Every Evening</p>
+    </div>
+  </section>
+
+  <section class="menu-container">
+    <div class="menu-grid">
+
+      <div class="menu-card">
+        <img src="https://m.media-amazon.com/images/S/aplus-media-library-service-media/62702ac7-2b42-453e-92f0-70234301db44.__CR0,0,2000,2000_PT0_SX300_V1___.jpg" alt="Pancakes">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Bellini</h2>
+            <span class="price">$34.00</span>
+          </div>
+          <p>Bellini Zero Cipriani (25.36 oz / 750 ml).</p>
+          <div class="tags">
+            <span class="tag">Popular</span>
+            <span class="tag">Sweet</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSROeHx2PiVlTf3SG7n2CMcsvZCj0xAYh7aN1MkYWlFhULI5LE2" alt="Avocado Toast">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Kir Royale</h2>
+            <span class="price">$80.00</span>
+          </div>
+          <p> Elegant Cocktail made by combining \(10\text{ ml}\) (1 part) of crème de cassis (blackcurrant liqueur) with \(90\text{ ml}\) </p>
+          <div class="tags">
+            <span class="tag">Healthy</span>
+            <span class="tag">Chef's Pick</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://static01.nyt.com/images/2025/02/25/multimedia/RS-French75-bftg/RS-French75-bftg-facebookJumbo.jpg" alt="English Breakfast">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>French 75</h2>
+            <span class="price">$45.00</span>
+          </div>
+          <p>Refreshing cocktail combining gin, fresh lemon juice, simple syrup, and champagne, typically served in a flute with a lemon twist..</p>
+          <div class="tags">
+            <span class="tag">Hearty</span>
+            <span class="tag">Best Seller</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEQ30aXaP-HJcRxlVq2sR_QtE5UeiqMRRoYw&s" alt="Croissant">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Champagne Cocktail</h2>
+            <span class="price">$60.00</span>
+          </div>
+          <p>Effervescent drink made by saturating a sugar cube with 2–3 dashes of Angostura bitters, placing it in a champagne flute, adding a splash of cognac (optional), and topping with chilled Champagne or dry sparkling wine, garnished with a lemon twist</p>
+          <div class="tags">
+            <span class="tag">Bakery</span>
+            <span class="tag">Light Bite</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbxC-YWhmPzWYFmRsrD8PC1uFDiAvGWBFo4A&s" alt="French Toast">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Old Cuban</h2>
+            <span class="price">$25.00</span>
+          </div>
+          <p>It combines aged rum, fresh lime, mint, and Angostura bitters, topped with Champagne for a refined, bubbly finish. It is served chilled in a coupe or flute.</p>
+          <div class="tags">
+            <span class="tag">Sweet</span>
+            <span class="tag">Trending</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxKwi56KWY8cIg3Hc7HdBZ3LbBH-ZjW86Vaw&s" alt="Omelette">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Mimosa</h2>
+            <span class="price">$10.00</span>
+          </div>
+          <p>Sparkling wine (prosecco) and orange juice..</p>
+          <div class="tags">
+            <span class="tag">Protein</span>
+            <span class="tag">Classic</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="footer">
+    Lounge served daily • 8:00 AM – 10:00 PM
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    header{
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    z-index: 100;
+}
+
+nav{
+    display: flex;
+    gap: 12px;
+}
+
+/* BUTTON STYLE */
+nav a{
+    text-decoration: none;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    padding: 10px 15px;
+    border-radius: 30px;
+    font-size: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+/* HOVER EFFECT */
+nav a:hover{
+    background: white;
+    color: black;
+}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8f5f1;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .hero {
+      height: 70vh;
+      background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+      url('https://images.unsplash.com/photo-1525351484163-7529414344d8?q=80&w=1600&auto=format&fit=crop') center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .hero-content h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      color: white;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .hero-content p {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .menu-container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 80px 25px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+    }
+
+    .menu-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      transition: 0.35s ease;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .menu-card img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .menu-content {
+      padding: 28px;
+    }
+
+    .menu-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 20px;
+    }
+
+    .menu-top h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #b07d62;
+      white-space: nowrap;
+    }
+
+    .menu-content p {
+      line-height: 1.7;
+      color: #555;
+      margin-bottom: 20px;
+      font-size: 0.96rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag {
+      background: #f1e4dc;
+      color: #8b5e46;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 40px 20px 60px;
+      color: #777;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero-content h1 {
+        font-size: 3.3rem;
+      }
+
+      .menu-top h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <header >
+       
+        <nav>
+          <a href="main (2).html"><--</a>
+            <a href="menu.html">Breaskfast</a>
+            <a href="brunch.html">Brunch</a>
+            <a href="Dinner.html">Dinner</a>
+            <a href="Drinks.html">Drinks</a>
+        </nav>
+    </header>
+    <div class="hero-content">
+      <h1>Breakfast Menu</h1>
+      <p>Freshly Prepared Every Morning</p>
+    </div>
+  </section>
+
+  <section class="menu-container">
+    <div class="menu-grid">
+
+      <div class="menu-card">
+        <img src="https://images.unsplash.com/photo-1525351484163-7529414344d8?q=80&w=1200&auto=format&fit=crop" alt="Pancakes">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Classic Pancakes</h2>
+            <span class="price">$34.00</span>
+          </div>
+          <p>Fluffy golden pancakes served with maple syrup, seasonal berries, and whipped butter.</p>
+          <div class="tags">
+            <span class="tag">Popular</span>
+            <span class="tag">Sweet</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?q=80&w=1200&auto=format&fit=crop" alt="Avocado Toast">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Avocado Toast</h2>
+            <span class="price">$30.00</span>
+          </div>
+          <p>Toasted artisan bread layered with smashed avocado, poached eggs, chilli flakes, and herbs.</p>
+          <div class="tags">
+            <span class="tag">Healthy</span>
+            <span class="tag">Chef's Pick</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://images.unsplash.com/photo-1550317138-10000687a72b?q=80&w=1200&auto=format&fit=crop" alt="English Breakfast">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>English Breakfast</h2>
+            <span class="price">$45.00</span>
+          </div>
+          <p>Eggs, grilled sausages, baked beans, mushrooms, roasted tomatoes, and toasted bread.</p>
+          <div class="tags">
+            <span class="tag">Hearty</span>
+            <span class="tag">Best Seller</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=80&w=1200&auto=format&fit=crop" alt="Croissant">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Butter Croissant</h2>
+            <span class="price">$20.00</span>
+          </div>
+          <p>Freshly baked buttery croissant served warm with strawberry jam and coffee.</p>
+          <div class="tags">
+            <span class="tag">Bakery</span>
+            <span class="tag">Light Bite</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://images.unsplash.com/photo-1484723091739-30a097e8f929?q=80&w=1200&auto=format&fit=crop" alt="French Toast">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>French Toast</h2>
+            <span class="price">$25.00</span>
+          </div>
+          <p>Brioche French toast topped with powdered sugar, berries, and vanilla cream.</p>
+          <div class="tags">
+            <span class="tag">Sweet</span>
+            <span class="tag">Trending</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="https://images.unsplash.com/photo-1608039755401-742074f0548d?q=80&w=1200&auto=format&fit=crop" alt="Omelette">
+        <div class="menu-content">
+          <div class="menu-top">
+            <h2>Cheese Omelette</h2>
+            <span class="price">$10.00</span>
+          </div>
+          <p>Three-egg omelette with cheddar cheese, herbs, grilled tomatoes, and toast.</p>
+          <div class="tags">
+            <span class="tag">Protein</span>
+            <span class="tag">Classic</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="footer">
+    Breakfast served daily • 7:00 AM – 12:00 PM
+  </div>
+
+</body>
+</html>

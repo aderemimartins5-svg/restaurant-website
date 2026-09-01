@@ -1,0 +1,1355 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arqen — Reserve a Table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:   #f5f0e8;
+    --sand:    #e8ddd0;
+    --bronze:  #c49a6c;
+    --deep:    #1a1410;
+    --char:    #2d2620;
+    --mid:     #5a4a3a;
+    --light:   #8a7a6a;
+    --white:   #faf8f4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Josefin Sans', sans-serif;
+    background: var(--deep);
+    color: var(--cream);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--bronze);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, opacity 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--bronze);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s ease, width 0.3s, height 0.3s, opacity 0.2s;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 28px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(26,20,16,0.95) 0%, transparent 100%);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--cream);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--bronze); }
+
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--light);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--cream); }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 60px 80px;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(135deg, rgba(26,20,16,0.7) 0%, rgba(26,20,16,0.3) 50%, rgba(196,154,108,0.15) 100%),
+      url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=80') center/cover no-repeat;
+    transform: scale(1.05);
+    animation: heroZoom 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes heroZoom {
+    from { transform: scale(1.05); }
+    to   { transform: scale(1.12); }
+  }
+
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, var(--deep) 0%, transparent 50%);
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 700px; }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(54px, 8vw, 96px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--bronze);
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--sand);
+    line-height: 1.8;
+    max-width: 400px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.7s forwards;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px; right: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.2s forwards;
+  }
+
+  .hero-scroll span {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--light);
+    writing-mode: vertical-rl;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--bronze), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--bronze);
+    margin: 0 auto 60px;
+    opacity: 0.6;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  /* =============================================
+     RESERVATION SECTION
+  ============================================= */
+  .reservation-section {
+    padding: 120px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .res-header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+
+  .res-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 6vw, 68px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--white);
+  }
+
+  .res-header h2 em { font-style: italic; color: var(--bronze); }
+
+  .res-header p {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--light);
+    margin-top: 20px;
+    line-height: 2;
+  }
+
+  /* STEP INDICATOR */
+  .steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 70px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+  }
+
+  .step-num {
+    width: 36px; height: 36px;
+    border: 1px solid var(--mid);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--light);
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step.active .step-num {
+    border-color: var(--bronze);
+    background: var(--bronze);
+    color: var(--deep);
+    font-weight: 600;
+  }
+
+  .step.done .step-num {
+    border-color: var(--bronze);
+    background: transparent;
+    color: var(--bronze);
+  }
+
+  .step-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--light);
+    transition: color 0.4s;
+  }
+
+  .step.active .step-label { color: var(--cream); }
+  .step.done .step-label   { color: var(--bronze); }
+
+  .step-line {
+    width: 80px;
+    height: 1px;
+    background: var(--mid);
+    margin: 0 20px;
+    transition: background 0.4s;
+  }
+
+  .step-line.done { background: var(--bronze); opacity: 0.5; }
+
+  /* FORM PANELS */
+  .form-panel {
+    display: none;
+    animation: fadeUp 0.5s ease forwards;
+  }
+  .form-panel.active { display: block; }
+
+  /* EXPERIENCE CARDS (Step 1) */
+  .experience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 50px;
+  }
+
+  .exp-card {
+    border: 1px solid var(--mid);
+    padding: 36px 28px;
+    cursor: none;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    background: var(--char);
+  }
+
+  .exp-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(196,154,108,0.08) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .exp-card:hover::before, .exp-card.selected::before { opacity: 1; }
+
+  .exp-card:hover, .exp-card.selected {
+    border-color: var(--bronze);
+    transform: translateY(-4px);
+  }
+
+  .exp-card.selected {
+    background: rgba(196,154,108,0.08);
+  }
+
+  .exp-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+    filter: grayscale(0.3);
+  }
+
+  .exp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .exp-time {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--bronze);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .exp-desc {
+    font-size: 11px;
+    color: var(--light);
+    line-height: 1.9;
+    letter-spacing: 0.05em;
+  }
+
+  .exp-check {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 20px; height: 20px;
+    border: 1px solid var(--bronze);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 10px;
+    color: var(--bronze);
+  }
+
+  .exp-card.selected .exp-check { opacity: 1; }
+
+  /* FORM FIELDS (Step 2) */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 50px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-group label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--light);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--char);
+    border: 1px solid var(--mid);
+    color: var(--cream);
+    padding: 16px 20px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    outline: none;
+    transition: border-color 0.3s, background 0.3s;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--bronze);
+    background: rgba(196,154,108,0.05);
+  }
+
+  .form-group select option { background: var(--char); }
+
+  .form-group textarea { resize: none; height: 100px; }
+
+  /* Guest selector */
+  .guest-selector {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--mid);
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .guest-selector:focus-within { border-color: var(--bronze); }
+
+  .guest-btn {
+    background: var(--char);
+    border: none;
+    color: var(--bronze);
+    width: 48px;
+    height: 52px;
+    font-size: 20px;
+    cursor: none;
+    transition: background 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Josefin Sans', sans-serif;
+  }
+
+  .guest-btn:hover { background: rgba(196,154,108,0.15); }
+
+  .guest-count {
+    flex: 1;
+    background: var(--char);
+    border: none;
+    border-left: 1px solid var(--mid);
+    border-right: 1px solid var(--mid);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    text-align: center;
+    height: 52px;
+    outline: none;
+    padding: 0;
+    -moz-appearance: textfield;
+  }
+
+  .guest-count::-webkit-inner-spin-button,
+  .guest-count::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  /* Time slots (Step 2) */
+  .time-slots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .time-slot {
+    border: 1px solid var(--mid);
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--light);
+    cursor: none;
+    transition: all 0.25s;
+    background: var(--char);
+  }
+
+  .time-slot:hover {
+    border-color: var(--bronze);
+    color: var(--cream);
+  }
+
+  .time-slot.selected {
+    background: var(--bronze);
+    border-color: var(--bronze);
+    color: var(--deep);
+    font-weight: 600;
+  }
+
+  .time-slot.unavailable {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
+    text-decoration: line-through;
+  }
+
+  /* SUMMARY (Step 3) */
+  .summary-card {
+    background: var(--char);
+    border: 1px solid var(--mid);
+    padding: 50px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--bronze), transparent);
+  }
+
+  .summary-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    color: var(--white);
+    margin-bottom: 36px;
+  }
+
+  .summary-logo span { color: var(--bronze); }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  .summary-item {}
+
+  .summary-item .s-label {
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 6px;
+  }
+
+  .summary-item .s-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--white);
+  }
+
+  .summary-divider {
+    height: 1px;
+    background: var(--mid);
+    margin: 36px 0;
+  }
+
+  .summary-note {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--light);
+    line-height: 2;
+    padding: 20px;
+    border: 1px solid rgba(196,154,108,0.2);
+    background: rgba(196,154,108,0.04);
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-back {
+    background: none;
+    border: 1px solid var(--mid);
+    color: var(--light);
+    padding: 16px 36px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.3s;
+  }
+
+  .btn-back:hover {
+    border-color: var(--light);
+    color: var(--cream);
+  }
+
+  .btn-next {
+    background: var(--bronze);
+    border: 1px solid var(--bronze);
+    color: var(--deep);
+    padding: 18px 52px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: none;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-next::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%) skewX(-15deg);
+    transition: transform 0.4s ease;
+  }
+
+  .btn-next:hover::after { transform: translateX(110%) skewX(-15deg); }
+  .btn-next:hover { background: #d4aa7c; border-color: #d4aa7c; }
+
+  /* CONFIRMATION */
+  .confirmation {
+    display: none;
+    text-align: center;
+    padding: 80px 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .conf-icon {
+    width: 80px; height: 80px;
+    border: 1px solid var(--bronze);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 36px;
+    font-size: 28px;
+    color: var(--bronze);
+    animation: ringPulse 2s ease infinite;
+  }
+
+  @keyframes ringPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(196,154,108,0); }
+    50%       { box-shadow: 0 0 0 16px rgba(196,154,108,0); }
+  }
+
+  .conf-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .conf-title em { font-style: italic; color: var(--bronze); }
+
+  .conf-ref {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--light);
+    margin-bottom: 40px;
+  }
+
+  .conf-ref span { color: var(--bronze); }
+
+  .conf-details {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    padding: 36px 0;
+    border-top: 1px solid var(--mid);
+    border-bottom: 1px solid var(--mid);
+    margin-bottom: 40px;
+  }
+
+  .conf-detail .cd-label {
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 8px;
+  }
+
+  .conf-detail .cd-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    color: var(--white);
+  }
+
+  .conf-note {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--light);
+    line-height: 2;
+    max-width: 500px;
+    margin: 0 auto 40px;
+  }
+
+  /* INFO STRIP */
+  .info-strip {
+    background: var(--char);
+    border-top: 1px solid var(--mid);
+    padding: 80px 60px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .info-item {}
+
+  .info-item .i-label {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    margin-bottom: 16px;
+  }
+
+  .info-item .i-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .info-item .i-body {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--light);
+    line-height: 2;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 60px;
+    border-top: 1px solid rgba(90,74,58,0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer .f-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.1em;
+  }
+
+  footer .f-logo span { color: var(--bronze); }
+
+  footer small {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--mid);
+  }
+
+  footer .f-links { display: flex; gap: 28px; }
+  footer .f-links a {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--light);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  footer .f-links a:hover { color: var(--cream); }
+
+  /* POLICY NOTE */
+  .policy-note {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+    text-align: center;
+    line-height: 2;
+    margin-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  /* =============================================
+     RESPONSIVE
+  ============================================= */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 24px 60px; }
+    .hero-scroll { right: 24px; }
+    .reservation-section { padding: 80px 24px; }
+    .experience-grid { grid-template-columns: 1fr; gap: 14px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .time-slots { grid-template-columns: repeat(3, 1fr); }
+    .summary-card { padding: 28px; }
+    .summary-grid { grid-template-columns: 1fr; gap: 20px; }
+    .info-strip { padding: 60px 24px; }
+    .info-grid { grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+    .steps { gap: 0; }
+    .step-line { width: 40px; margin: 0 10px; }
+    .step-label { display: none; }
+    .btn-row { flex-direction: column-reverse; gap: 14px; }
+    .btn-next, .btn-back { width: 100%; text-align: center; }
+    .conf-details { flex-direction: column; gap: 24px; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-title { font-size: 40px; }
+    .steps { display: none; }
+    .time-slots { grid-template-columns: repeat(2, 1fr); }
+    .res-header h2 { font-size: 36px; }
+  }
+
+  /* VALIDATION */
+  .form-group input.error,
+  .form-group select.error {
+    border-color: #c0392b;
+  }
+
+  .err-msg {
+    font-size: 10px;
+    color: #e74c3c;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="main (2).html" class="nav-logo">Arq<span>en</span></a>
+  <ul class="nav-links">
+    <li><a href="main (2).html">Home</a></li>
+    <li><a href="menu.html">Menu</a></li>
+    <li><a href="reservation.html" class="active">Reserve</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Lagos · Nigeria</p>
+    <h1 class="hero-title">Reserve Your<br><em>Table</em></h1>
+    <p class="hero-sub">Experience the finest dining in the heart of Lagos.<br>Every reservation is a promise of something extraordinary.</p>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- RESERVATION FORM -->
+<section class="reservation-section" id="reserve">
+  <div class="res-header">
+    <p class="section-label">Make a Reservation</p>
+    <h2>Begin Your <em>Evening</em></h2>
+    <p>We look forward to welcoming you. Reservations are held for 15 minutes past the booking time.</p>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step active" id="step-indicator-1">
+      <div class="step-num">01</div>
+      <span class="step-label">Experience</span>
+    </div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step" id="step-indicator-2">
+      <div class="step-num">02</div>
+      <span class="step-label">Details</span>
+    </div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step" id="step-indicator-3">
+      <div class="step-num">03</div>
+      <span class="step-label">Confirm</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: Experience -->
+  <div class="form-panel active" id="panel-1">
+    <p class="section-label" style="text-align:left; margin-bottom:28px;">Select your dining experience</p>
+    <div class="experience-grid">
+
+      <div class="exp-card" data-exp="breakfast" onclick="selectExperience(this)">
+        <div class="exp-check">✓</div>
+        <span class="exp-icon">☀️</span>
+        <div class="exp-name">Breakfast & Brunch</div>
+        <div class="exp-time">7:00 AM — 12:00 PM</div>
+        <div class="exp-desc">Start your day with our signature Turkish breakfast, stacked pancakes, and freshly brewed coffee in a sunlit setting.</div>
+      </div>
+
+      <div class="exp-card" data-exp="dinner" onclick="selectExperience(this)">
+        <div class="exp-check">✓</div>
+        <span class="exp-icon">🌙</span>
+        <div class="exp-name">Dinner</div>
+        <div class="exp-time">5:00 PM — 10:00 PM</div>
+        <div class="exp-desc">Halal Mediterranean cuisine — from smash burgers to grilled sea bass — served in an intimate candlelit atmosphere.</div>
+      </div>
+
+      <div class="exp-card" data-exp="lounge" onclick="selectExperience(this)">
+        <div class="exp-check">✓</div>
+        <span class="exp-icon">🥃</span>
+        <div class="exp-name">Lounge & Shisha</div>
+        <div class="exp-time">8:00 PM — 2:00 AM</div>
+        <div class="exp-desc">Premium cocktails, signature mocktails, and an elevated shisha experience for an unforgettable evening out.</div>
+      </div>
+
+    </div>
+
+    <div class="btn-row">
+      <div></div>
+      <button class="btn-next" onclick="nextStep(1)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Details -->
+  <div class="form-panel" id="panel-2">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="fname" placeholder="e.g. Adewale" autocomplete="given-name">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" id="lname" placeholder="e.g. Johnson" autocomplete="family-name">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="+234 800 000 0000" autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="res-date">
+      </div>
+      <div class="form-group">
+        <label>Number of Guests</label>
+        <div class="guest-selector">
+          <button class="guest-btn" onclick="changeGuests(-1)" type="button">−</button>
+          <input type="number" class="guest-count" id="guests" value="2" min="1" max="20" readonly>
+          <button class="guest-btn" onclick="changeGuests(1)" type="button">+</button>
+        </div>
+      </div>
+      <div class="form-group full">
+        <label>Preferred Time</label>
+        <div class="time-slots" id="time-slots-container"></div>
+      </div>
+      <div class="form-group full">
+        <label>Special Requests <span style="color:var(--mid); font-size:9px;">(Optional)</span></label>
+        <textarea id="requests" placeholder="Dietary requirements, celebrations, seating preferences..."></textarea>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep(2)">← Back</button>
+      <button class="btn-next" onclick="nextStep(2)">Review Booking →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Confirm -->
+  <div class="form-panel" id="panel-3">
+    <div class="summary-card">
+      <div class="summary-logo">Arq<span>en</span></div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="s-label">Experience</div>
+          <div class="s-value" id="sum-exp">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="s-label">Guest Name</div>
+          <div class="s-value" id="sum-name">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="s-label">Date</div>
+          <div class="s-value" id="sum-date">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="s-label">Time</div>
+          <div class="s-value" id="sum-time">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="s-label">Guests</div>
+          <div class="s-value" id="sum-guests">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="s-label">Contact</div>
+          <div class="s-value" id="sum-contact" style="font-size:14px; letter-spacing:0.04em;">—</div>
+        </div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-note" id="sum-requests-wrap" style="display:none;">
+        <span style="font-size:9px; letter-spacing:0.3em; text-transform:uppercase; color:var(--bronze); display:block; margin-bottom:8px;">Special Requests</span>
+        <span id="sum-requests"></span>
+      </div>
+    </div>
+
+    <div class="policy-note">
+      By confirming, you agree to our reservation policy. Reservations are held for 15 minutes.<br>
+      Cancellations must be made at least 2 hours in advance. A confirmation will be sent to your email.
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep(3)">← Modify</button>
+      <button class="btn-next" onclick="submitReservation()">Confirm Reservation ✓</button>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div class="confirmation" id="confirmation">
+    <div class="conf-icon">✓</div>
+    <h2 class="conf-title">You're <em>Confirmed</em></h2>
+    <p class="conf-ref">Reservation Reference: <span id="conf-ref">—</span></p>
+    <div class="conf-details">
+      <div class="conf-detail">
+        <div class="cd-label">Experience</div>
+        <div class="cd-value" id="conf-exp">—</div>
+      </div>
+      <div class="conf-detail">
+        <div class="cd-label">Date & Time</div>
+        <div class="cd-value" id="conf-dt">—</div>
+      </div>
+      <div class="conf-detail">
+        <div class="cd-label">Guests</div>
+        <div class="cd-value" id="conf-guests">—</div>
+      </div>
+    </div>
+    <p class="conf-note">A confirmation has been sent to your email address. We look forward to hosting you at Arqen. Please arrive 5 minutes early to be seated promptly.</p>
+    <button class="btn-next" onclick="resetForm()" style="margin: 0 auto; display:block;">Make Another Reservation</button>
+  </div>
+
+</section>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="i-label">Location</div>
+      <div class="i-title">Heart of Lagos</div>
+      <div class="i-body">Victoria Island, Lagos<br>Nigeria<br><br>Valet parking available on weekends.<br>Walk-ins welcome subject to availability.</div>
+    </div>
+    <div class="info-item">
+      <div class="i-label">Opening Hours</div>
+      <div class="i-title">Daily Service</div>
+      <div class="i-body">
+        Breakfast &amp; Brunch: 7am – 12pm<br>
+        Dinner: 5pm – 10pm<br>
+        Lounge: 8pm – 2am<br><br>
+        Kitchen closes 30 minutes before closing.
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="i-label">Enquiries</div>
+      <div class="i-title">Get in Touch</div>
+      <div class="i-body">
+        reservations@arqens.com<br>
+        +234 800 ARQEN 00<br><br>
+        For group bookings of 10+ guests,<br>please contact us directly for bespoke arrangements.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">Arq<span>en</span></div>
+  <div class="f-links">
+    <a href="#">Menu</a>
+    <a href="#">Gallery</a>
+    <a href="#">Privacy</a>
+    <a href="#">Contact</a>
+  </div>
+  <small>© 2026 Arqen Restaurant. All rights reserved.</small>
+</footer>
+
+<script>
+  /* CURSOR */
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+    setTimeout(() => {
+      ring.style.left = e.clientX + 'px';
+      ring.style.top  = e.clientY + 'px';
+    }, 80);
+  });
+  document.querySelectorAll('button, a, .exp-card, .time-slot').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width  = '60px';
+      ring.style.height = '60px';
+      ring.style.opacity = '0.8';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width  = '36px';
+      ring.style.height = '36px';
+      ring.style.opacity = '0.5';
+    });
+  });
+
+  /* STATE */
+  let currentStep = 1;
+  let selectedExp = '';
+  let selectedTime = '';
+
+  const timeSlotsData = {
+    breakfast: ['7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM'],
+    dinner:    ['5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM','8:00 PM','8:30 PM','9:00 PM','9:30 PM'],
+    lounge:    ['8:00 PM','8:30 PM','9:00 PM','9:30 PM','10:00 PM','10:30 PM','11:00 PM','11:30 PM','12:00 AM','12:30 AM']
+  };
+
+  const unavailableSlots = {
+    breakfast: ['8:00 AM','10:00 AM'],
+    dinner:    ['7:00 PM','7:30 PM'],
+    lounge:    ['9:00 PM']
+  };
+
+  const expLabels = {
+    breakfast: 'Breakfast & Brunch',
+    dinner:    'Dinner',
+    lounge:    'Lounge & Shisha'
+  };
+
+  /* Select experience */
+  function selectExperience(card) {
+    document.querySelectorAll('.exp-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedExp = card.dataset.exp;
+    selectedTime = '';
+    renderTimeSlots();
+  }
+
+  /* Render time slots based on experience */
+  function renderTimeSlots() {
+    const container = document.getElementById('time-slots-container');
+    const slots = timeSlotsData[selectedExp] || timeSlotsData.dinner;
+    const unavail = unavailableSlots[selectedExp] || [];
+    container.innerHTML = slots.map(t =>
+      `<div class="time-slot${unavail.includes(t) ? ' unavailable' : ''}" onclick="selectTime(this, '${t}')">${t}</div>`
+    ).join('');
+  }
+
+  function selectTime(el, time) {
+    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTime = time;
+  }
+
+  /* Guest counter */
+  function changeGuests(delta) {
+    const input = document.getElementById('guests');
+    let val = parseInt(input.value) + delta;
+    val = Math.max(1, Math.min(20, val));
+    input.value = val;
+  }
+
+  /* Set min date to today */
+  const dateInput = document.getElementById('res-date');
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  dateInput.min = `${yyyy}-${mm}-${dd}`;
+  dateInput.value = `${yyyy}-${mm}-${dd}`;
+
+  /* Render time slots for default (dinner) */
+  renderTimeSlots();
+
+  /* STEP NAVIGATION */
+  function setStep(n) {
+    for (let i = 1; i <= 3; i++) {
+      const panel = document.getElementById(`panel-${i}`);
+      const ind   = document.getElementById(`step-indicator-${i}`);
+      const line  = document.getElementById(`line-${i}`);
+      panel.classList.toggle('active', i === n);
+      ind.classList.remove('active','done');
+      if (i === n)  ind.classList.add('active');
+      if (i <  n)   ind.classList.add('done');
+      if (line) line.classList.toggle('done', i < n);
+    }
+    currentStep = n;
+    document.getElementById('reserve').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function nextStep(from) {
+    if (from === 1) {
+      if (!selectedExp) {
+        alert('Please select a dining experience to continue.');
+        return;
+      }
+      setStep(2);
+    } else if (from === 2) {
+      if (!validateStep2()) return;
+      populateSummary();
+      setStep(3);
+    }
+  }
+
+  function prevStep(from) {
+    setStep(from - 1);
+  }
+
+  /* Validation */
+  function validateStep2() {
+    const fields = [
+      { id: 'fname',    msg: 'Please enter your first name.' },
+      { id: 'lname',    msg: 'Please enter your last name.' },
+      { id: 'email',    msg: 'Please enter a valid email address.' },
+      { id: 'phone',    msg: 'Please enter your phone number.' },
+      { id: 'res-date', msg: 'Please select a date.' },
+    ];
+
+    let valid = true;
+    document.querySelectorAll('.err-msg').forEach(e => e.remove());
+    document.querySelectorAll('.error').forEach(e => e.classList.remove('error'));
+
+    fields.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (!el.value.trim() || (f.id === 'email' && !el.value.includes('@'))) {
+        el.classList.add('error');
+        const msg = document.createElement('div');
+        msg.className = 'err-msg';
+        msg.textContent = f.msg;
+        el.parentNode.appendChild(msg);
+        valid = false;
+      }
+    });
+
+    if (!selectedTime) {
+      alert('Please select a preferred time slot.');
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  /* Populate summary */
+  function formatDate(val) {
+    const d = new Date(val + 'T00:00:00');
+    return d.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function populateSummary() {
+    document.getElementById('sum-exp').textContent    = expLabels[selectedExp];
+    document.getElementById('sum-name').textContent   = document.getElementById('fname').value + ' ' + document.getElementById('lname').value;
+    document.getElementById('sum-date').textContent   = formatDate(document.getElementById('res-date').value);
+    document.getElementById('sum-time').textContent   = selectedTime;
+    document.getElementById('sum-guests').textContent = document.getElementById('guests').value + ' Guest' + (document.getElementById('guests').value > 1 ? 's' : '');
+    document.getElementById('sum-contact').textContent = document.getElementById('email').value + '  ·  ' + document.getElementById('phone').value;
+    const req = document.getElementById('requests').value.trim();
+    if (req) {
+      document.getElementById('sum-requests-wrap').style.display = 'block';
+      document.getElementById('sum-requests').textContent = req;
+    } else {
+      document.getElementById('sum-requests-wrap').style.display = 'none';
+    }
+  }
+
+  /* Submit */
+  function submitReservation() {
+    const ref = 'ARQ-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    document.getElementById('conf-ref').textContent    = ref;
+    document.getElementById('conf-exp').textContent    = expLabels[selectedExp];
+    document.getElementById('conf-dt').textContent     = formatDate(document.getElementById('res-date').value) + ', ' + selectedTime;
+    document.getElementById('conf-guests').textContent = document.getElementById('guests').value + ' Guest' + (document.getElementById('guests').value > 1 ? 's' : '');
+
+    document.getElementById('panel-3').style.display = 'none';
+    document.getElementById('confirmation').style.display = 'block';
+
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.step-line').forEach(l => l.classList.add('done'));
+
+    document.getElementById('reserve').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function resetForm() {
+    currentStep = 1;
+    selectedExp  = '';
+    selectedTime = '';
+    document.getElementById('confirmation').style.display = 'none';
+    document.getElementById('panel-3').style.display = '';
+    document.querySelectorAll('.exp-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('fname').value = '';
+    document.getElementById('lname').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('requests').value = '';
+    document.getElementById('guests').value = 2;
+    renderTimeSlots();
+    setStep(1);
+  }
+</script>
+</body>
+</html>
+html
+

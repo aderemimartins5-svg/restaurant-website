@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arqen</title>
+    <meta name="description" content="Alicis is the viral restaurant experience in the heart of North London, serving breakfast, brunch, dinner and a stylish lounge journey.">
+
+    <link rel="stylesheet" href="https://alicis.co.uk/wp-content/themes/assembler/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>emailjs.init("qWCcoL5RXm_MEJK5L");</script>
+
+    <style>
+        :root {
+            --primary: #000;
+            --accent: #e8c4b8;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            color: #1E1E1E;
+            background: #fff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        #bg-video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: -1;
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+
+        h1, h2 { font-family: 'Ano', sans-serif; font-weight: 700; }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            text-align: center;
+            margin: 60px 0 20px;
+        }
+
+        /* ===== HEADER / NAV ===== */
+        header {
+            position: absolute;
+            top: 20px; right: 40px;
+            z-index: 100;
+        }
+
+        nav { display: flex; gap: 12px; }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        nav a:hover { background: white; color: black; }
+
+        /* ===== BUTTON ===== */
+        .button {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .button:hover { background: #333; }
+
+        /* ===== SLIDES WRAPPER ===== */
+        .slides-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            padding: 40px 20px;
+            align-items: start;
+        }
+
+        .slides-wrapper section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* ===== IMAGE CAROUSEL (auto-slide, no lag) ===== */
+        /*
+         * FIX: The original animation had identical start/end % for each
+         * slide (0%,25% | 30%,55% | 60%,85%) which caused a visible freeze.
+         * We now use a smooth 3-image loop:
+         *   0–30%   → slide 1
+         *   33%     → jump to slide 2 (instantaneous via step timing)
+         *   33–63%  → slide 2
+         *   66%     → jump to slide 3
+         *   66–96%  → slide 3
+         *   99%     → jump back to start
+         *
+         * Easier: just use CSS transition: transform on a JS-driven approach
+         * so timing is pixel-perfect and never "sticks".
+         */
+        .carousel {
+            width: 100%;
+            aspect-ratio: 5 / 4;
+            overflow: hidden;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .carous {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            /* REPLACED keyframe animation with JS-controlled transition below */
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.18, 1);
+        }
+
+        .carous img {
+            width: 33.333%;   /* each img = 1/3 of 300% container */
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        img, video { max-width: 100%; height: auto; display: block; }
+
+        /* ===== SWIPER ===== */
+        .swiper { width: 100%; height: 400px; overflow: hidden; }
+        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ===== TESTIMONIALS ===== */
+        .testimonials {
+            width: 100%;
+            padding: 80px 0;
+            background: #f6f1ec;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .testimonials h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 60px;
+        }
+
+        /* FIX: wrapper clips the sliding strip */
+        .slider { width: 100%; overflow: hidden; }
+
+        /* FIX: JS drives translateX; CSS provides the smooth transition */
+        .slides {
+            display: flex;
+            transition: transform 0.7s cubic-bezier(0.77, 0, 0.18, 1);
+            will-change: transform;
+        }
+
+        .testimonial {
+            min-width: 100%;
+            padding: 20px 60px;
+            box-sizing: border-box;
+        }
+
+        .testimonial p { font-size: 15px; line-height: 1.8; }
+        .testimonial h2 { margin-top: 30px; font-size: 28px; }
+
+        /* ===== NEWSLETTER ===== */
+        .newsletter-section {
+            background: #e8c7c8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 80px 8%;
+            gap: 60px;
+            min-height: 70vh;
+        }
+
+        .newsletter-content { flex: 1; max-width: 450px; }
+
+        .newsletter-content h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 20px;
+            color: #2c2c2c;
+        }
+
+        .newsletter-content p { font-size: 18px; margin-bottom: 30px; color: #444; }
+
+        .email-form { display: flex; flex-direction: column; gap: 15px; }
+
+        .email-input { padding: 15px; font-size: 16px; border: none; width: 100%; }
+
+        .signup-btn {
+            padding: 12px 35px;
+            background: #4a3f3f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: fit-content;
+        }
+
+        .signup-btn:hover { background: #2c2c2c; }
+
+        .restaurant-image {
+            width: 60%;
+            border-radius: 1000px;
+            overflow: hidden;
+        }
+
+        .restaurant-image video { width: 100%; border-radius: 1000px; }
+
+        /* ===== FOOTER ===== */
+        footer { background: #f6f1ec; padding: 60px 20px; }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .footer-box { display: flex; flex-direction: column; }
+        .footer-box h1 { font-size: 40px; margin-bottom: 10px; }
+        .footer-box h2 { margin-bottom: 15px; }
+        .footer-box a { text-decoration: none; color: black; margin: 5px 0; }
+        .footer-box a:hover { opacity: 0.7; }
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .social-icon svg { transition: 0.3s ease; }
+        .social-icon svg:hover { transform: scale(1.15); opacity: 0.7; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            header { right: 20px; top: 15px; }
+            nav { flex-wrap: wrap; justify-content: center; }
+            .hero-content h1 { font-size: 48px; }
+            .newsletter-section { flex-direction: column; text-align: center; padding: 60px 5%; }
+            .restaurant-image { width: 100%; padding-left: 0; }
+            .footer-container { flex-direction: column; }
+        }
+
+        @media (max-width: 768px) {
+            body { overflow-x: hidden; }
+            .hero { height: 100vh; padding: 20px; }
+            header { width: 100%; right: 0; top: 10px; padding: 0 10px; }
+            nav { width: 100%; justify-content: center; gap: 8px; flex-wrap: wrap; }
+            nav a { padding: 10px 16px; font-size: 12px; }
+            .hero-content h1 { font-size: 36px; line-height: 1.2; }
+            .hero-content p { font-size: 15px; line-height: 1.6; padding: 0 10px; }
+            .section-title { font-size: 2rem; padding: 0 10px; }
+            section p { padding: 0 15px; text-align: center; }
+            .swiper { height: 300px; }
+            .newsletter-content h1 { font-size: 36px; }
+            .newsletter-content p { font-size: 16px; }
+            .signup-btn { width: 100%; }
+            .testimonials h1 { font-size: 40px; }
+            .testimonial { padding: 20px; }
+            .testimonial p { font-size: 16px; line-height: 1.7; }
+            .testimonial h2 { font-size: 22px; }
+            .footer-box h1 { font-size: 32px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 { font-size: 28px; }
+            .hero-content p { font-size: 14px; }
+            nav a { font-size: 11px; padding: 8px 12px; }
+            .button { padding: 14px 20px; font-size: 13px; }
+            .section-title { font-size: 1.7rem; }
+            .swiper { height: 250px; }
+            .newsletter-section { padding: 40px 20px; }
+            .newsletter-content h1 { font-size: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="vid.mp4" type="video/mp4">
+    </video>
+
+    <header>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="reservation.html">Reservations</a>
+            <a href="menu.html" target="_blank">Menu</a>
+            <a href="#">Contact</a>
+            <a href="#">Blog</a>
+        </nav>
+    </header>
+
+    <div class="hero-content">
+        <h1>Alicis - A Brand new concept</h1>
+        <p>
+            A unique restaurant experience in the heart of North London.<br>
+            Breakfast • Brunch • Dinner • Lounge
+        </p><br><br>
+        <a href="reservation.html" class="button">RESERVE NOW</a>
+    </div>
+</section>
+
+<!-- BREAKFAST & DINNER CAROUSELS -->
+<div class="slides-wrapper">
+
+    <section>
+        <h2 class="section-title">BREAKFAST & BRUNCH</h2>
+        <p>From pancakes to wraps and traditional Turkish cuisine...</p>
+        <div class="carousel">
+            <div class="carous" id="carousel1">
+                <img src="https://i0.wp.com/alicis.co.uk/wp-content/uploads/2024/04/alici-s-high-res-photos-73.jpeg" alt="Traditional Turkish breakfast spread featuring fresh bread, white cheese, olives, and herbs arranged on a rustic wooden table">
+                <img src="https://i0.wp.com/alicis.co.uk/wp-content/uploads/2024/04/Pancakes.jpeg" alt="Fluffy stacked pancakes topped with whipped cream and fresh berries, served in a bright, welcoming dining environment">
+                <img src="https://thebakermama.com/wp-content/uploads/2021/09/Brunch-Spread-with-Friends-square.jpeg" alt="Abundant brunch spread with colorful pastries, fresh fruits, and various prepared dishes arranged on a table, conveying celebration and abundance">
+            </div>
+        </div>
+        <a href="menu.html" class="button" target="_blank">MENU</a>
+    </section>
+
+    <section>
+        <h2 class="section-title">DINNER & LOUNGE</h2>
+        <p>Halal Mediterranean menu + premium lounge & shisha experience...</p>
+        <div class="carousel">
+            <div class="carous" id="carousel2">
+                <img src="https://i0.wp.com/alicis.co.uk/wp-content/uploads/2024/04/Burger.jpeg" alt="Gourmet smash burger with caramelized onions and melted cheese stacked on a toasted bun, served appetizingly on a dark plate">
+                <img src="https://i0.wp.com/alicis.co.uk/wp-content/uploads/2024/04/Gorilla.jpeg" alt="Premium signature cocktail garnished with tropical fruits and fresh herbs, served in an elegant glass in a upscale lounge setting">
+                <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/45/34/3a/wide-range-of-international.jpg" alt="Mediterranean-inspired dinner spread featuring grilled fish, fresh salads, and seasonal vegetables arranged on elegant white plates, showcasing culinary expertise">
+            </div>
+        </div>
+        <a href="Dinner.html" class="button" target="_blank">MENU</a>
+    </section>
+
+</div>
+
+<!-- INTERIOR / SWIPER -->
+<section>
+    <h2 class="section-title">The Space</h2>
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <img src="https://resdiaryportal.wpengine.com/wp-content/uploads/2021/10/xopp-sydney-restaurant-1024x690.jpeg" alt="Modern restaurant interior with sophisticated lighting, sleek wooden tables, and comfortable seating creating an upscale dining ambiance">
+            </div>
+            <div class="swiper-slide">
+                <img src="https://images.squarespace-cdn.com/content/v1/671784f3dc5ab92560a87cdb/1758564795230-23SGRR4GOED3I9SHA96A/Noisy+Oyster+shoreditch+restuarant%2C+london.+Interiors+by+Harry+Nuriev%2C+crosby+studios+1+.jpg" alt="Contemporary restaurant space in Shoreditch with industrial-minimalist design, featuring warm lighting and thoughtfully curated furnishings, created by designer Harry Nuriev">
+            </div>
+            <div class="swiper-slide">
+                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=80" alt="Elegant restaurant interior with warm ambient lighting, beautifully arranged table settings, and refined decor evoking comfort and hospitality">
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+    <h1>TESTIMONIALS</h1>
+    <div class="slider">
+        <div class="slides" id="testimonialSlides">
+            <div class="testimonial">
+                <p>I had an amazing brunch with my partner at this charming little spot recently. To sum up, the food was absolutely fantastic and incredibly affordable. I was especially impressed with the fresh bread - it was warm, soft, and the perfect start to the meal. The rest of the dishes were equally delightful, made with fresh ingredients and a lot of care.</p>
+                <h2>PATRICIA C.</h2>
+            </div>
+            <div class="testimonial">
+                <p>This place is a hidden gem in Wood Green. I came to visit there with a friend and baby and the staff was so friendly, nice and accommodating. They were completely friendly with the baby and entertained him throughout, which is so nice to see and made the experience less stressful for a parent! The food was also delicious.</p>
+                <h2>JUVENTINA J.</h2>
+            </div>
+            <div class="testimonial">
+                <p>Aesthetically pleasing, lovely environment, amazing customer service and beautiful interior. I will definitely come back again.</p>
+                <h2>CAROLINE GRIFFITHS</h2>
+            </div>
+            <div class="testimonial">
+                <p>Without doubt, this is my new favourite place. I was in awe upon seeing the beautiful colour scheme, decor, and all the fine details that went into this venue. To top it off, the staff were wonderful! Very friendly and helpful. I was amazed by how attentive they were. I tried all the signature cocktails, all of which were amazing.</p>
+                <h2>DAVID K.</h2>
+            </div>
+            <div class="testimonial">
+                <p>One of the best dining experiences I've had in London.</p>
+                <h2>SOPHIE M.</h2>
+            </div>
+            <div class="testimonial">
+                <p>The cocktails were perfect and the food was outstanding.</p>
+                <h2>JAMES T.</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter-section">
+    <div class="newsletter-content">
+        <h1>STAY IN TOUCH</h1>
+        <p>Sign up to get updates, news and special offers.</p>
+        <form class="email-form" id="emailForm">
+            <input type="email" class="email-input" name="user_email" placeholder="Enter your email" required>
+            <button type="submit" class="signup-btn">SIGN UP</button>
+        </form>
+    </div>
+    <div class="restaurant-image">
+        <video autoplay muted loop playsinline>
+            <source src="grok.mp4" type="video/mp4">
+        </video>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-container">
+
+        <div class="footer-box">
+            <h1>Alicis</h1>
+            <p>The unique dining experience in the heart of Lagos.</p>
+            <div class="socials">
+                <a href="https://www.instagram.com/aderemimartins52026" target="_blank" class="social-icon" aria-label="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="black">
+                        <path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2zm0 2A3.76 3.76 0 0 0 4 7.75v8.5A3.76 3.76 0 0 0 7.75 20h8.5A3.76 3.76 0 0 0 20 16.25v-8.5A3.76 3.76 0 0 0 16.25 4h-8.5z"/>
+                        <path d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                        <circle cx="17.5" cy="6.5" r="1.2"/>
+                    </svg>
+                </a>
+            </div>
+            <small>© 2026 Alicis. All Rights Reserved.<br>designed by Arqen.co</small>
+        </div>
+
+        <div class="footer-box">
+            <h2>Quick Links</h2>
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Reservations</a>
+            <a href="#">Menu</a>
+            <a href="#">Contact</a>
+        </div>
+
+        <div class="footer-box">
+            <h2>Other Links</h2>
+            <a href="#">Terms & Conditions</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">FAQ</a>
+            <a href="#">Blog</a>
+        </div>
+
+    </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+/* ===== SWIPER (interior photos) ===== */
+new Swiper(".mySwiper", {
+    loop: true,
+    autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+    },
+    pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+    },
+    speed: 700,
+});
+
+/* ===== GENERIC IMAGE CAROUSEL FUNCTION =====
+ * FIX: Replaced CSS @keyframes animation (which caused stuttering and freeze)
+ * with JS-driven translateX + CSS transition. Each carousel is independent.
+ * The transition is cubic-bezier for a smooth, polished feel.
+ */
+function initCarousel(trackId, interval) {
+    const track = document.getElementById(trackId);
+    if (!track) return;
+
+    const total = track.children.length; // number of images
+    let current = 0;
+    let isTransitioning = false;
+
+    function next() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        current = (current + 1) % total;
+        track.style.transform = `translateX(-${(current * 100) / total}%)`;
+    }
+
+    track.addEventListener('transitionend', () => {
+        isTransitioning = false;
+    });
+
+    setInterval(next, interval);
+}
+
+initCarousel('carousel1', 3500);
+initCarousel('carousel2', 4000); // slight offset so they don't slide in sync
+
+/* ===== TESTIMONIAL SLIDER =====
+ * FIX: Original code had a race condition — DOMContentLoaded fires before
+ * emailjs init completes and the sendEmail binding was unreliable.
+ * Testimonial slider is now completely standalone, no DOMContentLoaded wrapper.
+ *
+ * Also fixed: the original used querySelectorAll('.testimonial') for length
+ * but the transform was on '.slides' — if the DOM was slow, index count could
+ * mismatch. Now we measure from the slides strip's children directly.
+ */
+(function () {
+    const strip = document.getElementById('testimonialSlides');
+    if (!strip) return;
+
+    const items = strip.children;
+    const total = items.length;
+    let idx = 0;
+    let busy = false;
+
+    function advance() {
+        if (busy) return;
+        busy = true;
+        idx = (idx + 1) % total;
+        strip.style.transform = `translateX(-${idx * 100}%)`;
+    }
+
+    strip.addEventListener('transitionend', () => { busy = false; });
+
+    setInterval(advance, 4000);
+})();
+
+/* ===== EMAIL FORM =====
+ * FIX: Removed inline onsubmit="sendEmail(event)" attribute and the
+ * DOMContentLoaded wrapper — combining both caused the handler to fire
+ * before window.sendEmail was assigned in some browsers.
+ * Now we attach directly with addEventListener after the DOM is ready.
+ */
+document.getElementById('emailForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    emailjs.sendForm(
+        "service_6e4a6ff",
+        "template_44drjqb",
+        this
+    ).then(() => {
+        alert("Signed up successfully!");
+        this.reset();
+    }).catch((error) => {
+        console.error("EmailJS error:", error);
+        alert("Something went wrong. Please try again.");
+    });
+});
+</script>
+
+</body>
+</html>
